@@ -1,9 +1,6 @@
 package mx.unison;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.*;
 
 public class Converter {
     public static void main(String[] args) {
@@ -24,12 +21,17 @@ public class Converter {
             List<String> tokens = getTokens(inputString);
             System.out.println(tokens.size());
             System.out.println(tokens);
+
+            List<String> postfix = Converter.toPostfix(tokens);
+            System.out.println(postfix.size());
+            System.out.println(postfix);
+
         }
     }
 
     public static boolean isOperator(String token) {
         return token.equals("+") || token.equals("-") ||
-                token.equals("*") || token.equals("/") || token.equals("/");
+                token.equals("*") || token.equals("/") || token.equals("^");
 
     }
 
@@ -44,6 +46,7 @@ public class Converter {
                 stack.push(token);
             } else if (token.equalsIgnoreCase(")")) {
                 while (!(t = stack.pop()).equals("(")) {
+                    System.out.println(token);
                     output.add(t);
                 }
             } else if (isOperand(token)) {
@@ -54,7 +57,7 @@ public class Converter {
                     stack.push(token);
                 } else {
                     int r1 = Converter.getPrec(token);
-                    int r2 = Converter.getPrec(stack.peek());
+                    int r2 = Converter.getPrec( stack.peek() );
 
                     if( r1 > r2 ){
                         stack.push(token);
@@ -65,6 +68,12 @@ public class Converter {
 
                 }
             }
+
+        }
+        String token;
+        while ( !stack.isEmpty() ) {
+            token = stack.pop();
+            output.add(token);
         }
         return output;
     }
@@ -80,11 +89,17 @@ public class Converter {
     }
 
     public static List<String> getTokens(String input) {
-        String[] tokens = input.split("\\s+");
+
+        StringTokenizer st = new StringTokenizer(input," ()+-*/^",
+                                            true);
 
         ArrayList<String> tokenList = new ArrayList<>();
-        for (String token : tokens) {
-            tokenList.add(token.trim());
+       while (st.hasMoreTokens()) {
+           String token = st.nextToken();
+           if(token.trim().length() == 0 ) {
+               continue;
+           }
+           tokenList.add(token);
         }
         return tokenList;
     }
@@ -105,7 +120,6 @@ public class Converter {
             case "-":
                 rank = 1;
                 break;
-
         }
 
         return rank;
