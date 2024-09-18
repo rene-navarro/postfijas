@@ -17,14 +17,12 @@ public class Converter {
             if (inputString.equals("quit") || inputString.equals("QUIT")) {
                 break;
             }
-            System.out.printf("%s%n", inputString);
+            // System.out.printf("%s%n", inputString);
             List<String> tokens = getTokens(inputString);
-            System.out.println(tokens.size());
-            System.out.println(tokens);
+            System.out.println(Converter.toString(tokens));
 
             List<String> postfix = Converter.toPostfix(tokens);
-            System.out.println(postfix.size());
-            System.out.println(postfix);
+            System.out.println(Converter.toString(postfix));
 
         }
     }
@@ -33,6 +31,16 @@ public class Converter {
         return token.equals("+") || token.equals("-") ||
                 token.equals("*") || token.equals("/") || token.equals("^");
 
+    }
+
+    public static String toString(List<String> list) {
+        StringBuilder output = new StringBuilder();
+
+        for (String token: list) {
+            output.append(token);
+            output.append(" ");
+        }
+        return output.toString();
     }
 
     public static ArrayList<String> toPostfix(List<String> tokens) {
@@ -46,7 +54,6 @@ public class Converter {
                 stack.push(token);
             } else if (token.equalsIgnoreCase(")")) {
                 while (!(t = stack.pop()).equals("(")) {
-                    System.out.println(token);
                     output.add(t);
                 }
             } else if (isOperand(token)) {
